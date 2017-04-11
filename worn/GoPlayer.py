@@ -12,6 +12,7 @@ class GoPlayer:
         attr = row.fetchone()
         conn.close()
         self.major_win = 0
+        self.major_play = 0
         self.out = False
         self.win = 0
         self.lose = 0

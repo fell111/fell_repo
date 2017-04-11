@@ -47,10 +47,12 @@ class GoLeague:
         self.team_seq = sorted(self.teams, key=lambda team: team.score, reverse=True)
 
     def print_seq(self):
-        print '队伍 积分 胜局'
+        print '排名 队伍 积分 胜局 胜 主将胜 主将负 负'
         for i in range(1, len(self.team_seq) + 1):
-            print str(i) + ' ' + self.team_seq[i - 1].team_name + ' ' + str(self.team_seq[i - 1].score)\
-                  + ' ' + str(self.team_seq[i - 1].win_set)
+            print str(i) + ', ' + self.team_seq[i - 1].team_name + ', ' + str(self.team_seq[i - 1].score)\
+                  + ', ' + str(self.team_seq[i - 1].win_set) + ', ' + str(self.team_seq[i - 1].win) + ', '\
+                  + str(self.team_seq[i - 1].major_win) + ', ' + str(self.team_seq[i - 1].major_lose) + ', '\
+                  + str(self.team_seq[i - 1].lose)
 
     def person_standing(self):
         return
@@ -77,7 +79,9 @@ for team in ChineseLeague.teams:
 
 
 print '#############################################################'
-print '姓名 胜 负 主将胜'
+print '姓名 胜 负 主将场次 主将胜'
 player_seq = sorted(all_players, key=lambda player: player.win, reverse=True)
 for i in range(1, len(player_seq) + 1):
-    print str(i) + ' ' + player_seq[i - 1].name + ' ' + str(player_seq[i - 1].win) + ' ' + str(player_seq[i - 1].lose) + ' ' + str(player_seq[i - 1].major_win)
+    print str(i) + ', ' + player_seq[i - 1].name + ', ' + str(player_seq[i - 1].win) + ', '\
+          + str(player_seq[i - 1].lose) + ', ' + str(player_seq[i - 1].major_play)\
+          + ', ' + str(player_seq[i - 1].major_win)
