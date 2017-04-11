@@ -47,22 +47,35 @@ class GoTeam:
     def __cmp__(self, other):
         return cmp(self.avg_rating(4), other.avg_rating(4))
 
-    def arrange_vs(self):
+    def arrange_vs(self, rounds):
         del self.vs_setting[:]
         temp_list = []
         for player in self.team_players:
             if player.country != u'cn':
-                roll = random.random()
-                if roll < 0.5:
-                    player.out = True
-                    continue
-            temp_list.append(player)
+                if player.play < rounds:
+                    if random.random() < 0.5:
+                        temp_list.append(player)
+            else:
+                temp_list.append(player)
         temp_list = temp_list[:4]
         self.vs_setting.append(temp_list.pop(0))
         random.shuffle(temp_list)
         self.vs_setting.extend(temp_list)
 
+    def re_arrange(self, seq):
+        conflict = self.vs_setting[seq]
+        while True:
+            random.shuffle(self.vs_setting)
+            if conflict != self.vs_setting[seq]:
+                break
+
+    def check_conflict(self, other):
+        for i in range(0,4):
+            if self.vs_setting[i].country != u'cn' and other.vs_setting[i].country != u'cn':
+                other.re_arrange(i)
+
     def vs_result(self, other):
+        self.check_conflict(other)
         print self.team_name + ' vs ' + other.team_name
         person_results = []
         for i in range(0, 4):
@@ -122,7 +135,6 @@ all_teams.reverse()
 print 'initial all teams and players'
 print 'team name, average elo, player1, player2, player3, player4'
 for team_info in all_teams:
-    team_info.arrange_vs()
     print team_info.team_name.encode('UTF-8'), team_info.avg_rating(4), team_info.team_players[0].name, team_info.team_players[1].name, \
         team_info.team_players[2].name, team_info.team_players[3].name
 

@@ -64,8 +64,8 @@ ChineseLeague.team_standing()
 for rounds in total_round:
     print 'Begin new round'
     for match in rounds:
-        match[0].arrange_vs()
-        match[1].arrange_vs()
+        match[0].arrange_vs(len(ChineseLeague.teams)-1)
+        match[1].arrange_vs(len(ChineseLeague.teams)-1)
         match[0].vs_result(match[1])
 
     ChineseLeague.team_standing()
