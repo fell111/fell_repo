@@ -92,8 +92,7 @@ class MainForm:
                                        str(all_players[i-1].major_win), str("%.2f"%win_rate),
                                        str("%.2f"%major_win_rate)))
     def onDBClick(event):
-        item = tree.selection()[0]
-        print "you clicked on ", tree.item(item, "values")
+        print "need to do something"
 
 if __name__ == "__main__":
     app = MainForm(MatchesSet.ChineseLeague)
