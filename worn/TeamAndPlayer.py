@@ -25,6 +25,8 @@ class GoTeam:
     def __init__(self, team):
         self.score = 0
         self.win = 0
+        self.major_win = 0
+        self.major_lose = 0
         self.lose = 0
         self.win_set = 0
         self.team_name = team[0].decode('UTF-8')
@@ -45,22 +47,35 @@ class GoTeam:
     def __cmp__(self, other):
         return cmp(self.avg_rating(4), other.avg_rating(4))
 
-    def arrange_vs(self):
+    def arrange_vs(self, rounds):
         del self.vs_setting[:]
         temp_list = []
         for player in self.team_players:
             if player.country != u'cn':
-                roll = random.random()
-                if roll < 0.5:
-                    player.out = True
-                    continue
-            temp_list.append(player)
+                if player.play < rounds:
+                    if random.random() < 0.5:
+                        temp_list.append(player)
+            else:
+                temp_list.append(player)
         temp_list = temp_list[:4]
         self.vs_setting.append(temp_list.pop(0))
         random.shuffle(temp_list)
         self.vs_setting.extend(temp_list)
 
+    def re_arrange(self, seq):
+        conflict = self.vs_setting[seq]
+        while True:
+            random.shuffle(self.vs_setting)
+            if conflict != self.vs_setting[seq]:
+                break
+
+    def check_conflict(self, other):
+        for i in range(0,4):
+            if self.vs_setting[i].country != u'cn' and other.vs_setting[i].country != u'cn':
+                other.re_arrange(i)
+
     def vs_result(self, other):
+        self.check_conflict(other)
         print self.team_name + ' vs ' + other.team_name
         person_results = []
         for i in range(0, 4):
@@ -72,6 +87,8 @@ class GoTeam:
             print self.vs_setting[i].name + ' ' + result[0] + ' ' + other.vs_setting[i].name + ' '\
                   + str(result[1]) + ' ' + str(result[2])
 
+        self.vs_setting[0].major_play += 1
+        other.vs_setting[0].major_play += 1
         if person_results[0] == 1:
             self.vs_setting[0].major_win += 1
         else:
@@ -81,18 +98,26 @@ class GoTeam:
         other.win_set += (4 - single_score)
         if single_score > 2:
             self.score += 3
+            self.win += 1
+            other.lose += 1
             team_result = u'胜'
         elif single_score == 2:
             if person_results[0] == 1:
                 self.score += 2
+                self.major_win += 1
                 other.score += 1
+                other.major_lose += 1
                 team_result = u'主将胜'
             else:
                 self.score += 1
                 other.score += 2
+                self.major_lose += 1
+                other.major_win += 1
                 team_result = u'主将负'
         else:
             other.score += 3
+            self.lose += 1
+            other.win += 1
             team_result = u'负'
         print self.team_name + ' ' + team_result + ' ' + other.team_name
         print ''
@@ -110,7 +135,6 @@ all_teams.reverse()
 print 'initial all teams and players'
 print 'team name, average elo, player1, player2, player3, player4'
 for team_info in all_teams:
-    team_info.arrange_vs()
     print team_info.team_name.encode('UTF-8'), team_info.avg_rating(4), team_info.team_players[0].name, team_info.team_players[1].name, \
         team_info.team_players[2].name, team_info.team_players[3].name
 
