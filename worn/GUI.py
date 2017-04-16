@@ -7,6 +7,8 @@ from Tkinter import *
 
 class MainForm:
     def __init__(self, league_info):
+        self.player_click_reverse = False
+        self.team_click_reverse = False
         self.root1 = Tk()
         self.root2 = Tk()
         self.frame_1 = self.team_standing_frame(league_info)
@@ -63,8 +65,8 @@ class MainForm:
         frame = Frame(self.root2)
         self.root2.title('棋手排名')
         self.root1.resizable(False, False)
-        tree = ttk.Treeview(self.root2, height=20, show="headings", columns=('排名', '棋手', '胜', '负', '主将场次',
-                                                                            '主将胜', '总胜率', '主将胜率'))
+        columns = ('排名', '棋手', '胜', '负', '主将场次', '主将胜', '总胜率', '主将胜率')
+        tree = ttk.Treeview(self.root2, height=20, show="headings", columns=columns)
         tree.column('排名', width=50, anchor='center')
         tree.column('棋手', width=80, anchor='center')
         tree.column('胜', width=50, anchor='center')
@@ -121,24 +123,25 @@ class MainForm:
         region = self.player_tree.identify("region", event.x, event.y)
         column = self.player_tree.identify_column(event.x)
         if region == 'heading' and column in ['#1', '#3', '#4', '#5', '#6', '#7', '#8']:
-            self.treeview_sort_column(self.player_tree, column, False)
+            self.treeview_sort_column(self.player_tree, column, self.player_click_reverse)
+            self.player_click_reverse = not self.player_click_reverse
 
     def on_click_team(self, event):
         region = self.team_tree.identify("region", event.x, event.y)
         column = self.team_tree.identify_column(event.x)
         if region == 'heading' and column in ['#1', '#3', '#4', '#5', '#6', '#7', '#8']:
-            self.treeview_sort_column(self.team_tree, column, False)
+            self.treeview_sort_column(self.team_tree, column, self.team_click_reverse)
+            self.team_click_reverse = not self.team_click_reverse
 
     def treeview_sort_column(self, tv, col, reverse):
         l = [(tv.set(k, col), k) for k in tv.get_children('')]
-        l = sorted(l, key=lambda win: float(win[0]), reverse=reverse)
-
+        sort_l = sorted(l, key=lambda win: float(win[0]), reverse=reverse)
         # rearrange items in sorted positions
-        for index, (val, k) in enumerate(l):
+        for index, (val, k) in enumerate(sort_l):
             tv.move(k, '', index)
 
         # reverse sort next time
-        tv.heading(col, command=lambda: self.treeview_sort_column(tv, col, not reverse))
+        # tv.heading(col, command=lambda: self.treeview_sort_column(tv, col, not reverse))
 
 if __name__ == "__main__":
     app = MainForm(MatchesSet.ChineseLeague)
