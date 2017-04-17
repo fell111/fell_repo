@@ -77,11 +77,3 @@ for team in ChineseLeague.teams:
     for player in team.team_players:
         all_players.append(player)
 
-
-print '#############################################################'
-print '姓名 胜 负 主将场次 主将胜'
-player_seq = sorted(all_players, key=lambda player: player.win, reverse=True)
-for i in range(1, len(player_seq) + 1):
-    print str(i) + ', ' + player_seq[i - 1].name + ', ' + str(player_seq[i - 1].win) + ', '\
-          + str(player_seq[i - 1].lose) + ', ' + str(player_seq[i - 1].major_play)\
-          + ', ' + str(player_seq[i - 1].major_win)
